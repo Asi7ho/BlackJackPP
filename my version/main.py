@@ -1,9 +1,9 @@
-from utils.game import Game
+from utils.app import App
 
 
 def main():
-    game = Game()
-    game.startGame()
+    app = App()
+    app.startApp()
 
 
 if __name__ == "__main__":
