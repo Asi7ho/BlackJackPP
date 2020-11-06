@@ -23,7 +23,7 @@ def accueil():
     global can, jouer, quitter_j, v_score, scores, fond
 
     """on insere ici l'image de fond de l'écran d'accueil"""
-    fond = PhotoImage(file='fonds/fond_acceuil.PNG', master=fenetre)
+    fond = PhotoImage(file='./original/fonds/fond_acceuil.png', master=fenetre)
     can.create_image(569, 380, image=fond)
 
     """on raffraichit le canvas"""
@@ -50,7 +50,7 @@ def regle():  # ici la fonction présentant les règles
     jouer.destroy()
     v_score.destroy()
     """on insère un nouveau fond"""
-    fond = PhotoImage(file='fonds/fond regle.PNG', master=fenetre)
+    fond = PhotoImage(file='./original/fonds/fond regle.PNG', master=fenetre)
     can.create_image(569, 380, image=fond)
 
     """ on affiche les boutons pour montrer à quoi le jeu ressemble"""
@@ -86,7 +86,7 @@ def score():
     global can, fond, jouer, v_score
     can.delete(ALL)
     v_score.destroy()
-    fond = PhotoImage(file='fonds/fond score.PNG', master=fenetre)
+    fond = PhotoImage(file='./original/fonds/fond score.PNG', master=fenetre)
     can.create_image(569, 380, image=fond)
     dicordonne()  # on utilise la fonction pour décomposre le dictionnaire
     """et on boucle sur le dictionnaire décomposé afin d'afficher dans l'ordre les scores"""
@@ -115,7 +115,7 @@ def partie():
     b_doubler.destroy()
     quitter_j.destroy()
     jouer.destroy()
-    fond = PhotoImage(file='fonds/fond table.PNG', master=fenetre)
+    fond = PhotoImage(file='./original/fonds/fond table.PNG', master=fenetre)
     can.create_image(569, 380, image=fond)
     can.create_text(60, 30, text="Croupier", fill='black', font='Arial 18')
     can.create_text(450, 800, text="Joueur", fill='white', font='Arial 24')
@@ -201,7 +201,7 @@ def blackjack():
         b_doubler.destroy()
         quitter_j.destroy()
         fond = PhotoImage(
-            file='fonds/fond gagné blackjack.PNG', master=fenetre)
+            file='./original/fonds/fond gagné blackjack.PNG', master=fenetre)
         can.create_image(569, 380, image=fond)
         can.update()
         scores['joueur'] += 3
@@ -213,7 +213,7 @@ def blackjack():
         b_doubler.destroy()
         quitter_j.destroy()
         fond = PhotoImage(
-            file='fonds/fond perdu blackjack.PNG', master=fenetre)
+            file='./original/fonds/fond perdu blackjack.PNG', master=fenetre)
         can.create_image(569, 380, image=fond)
         can.update()
         scores['croupier'] += 3
@@ -243,7 +243,8 @@ def hit():
         b_doubler.destroy()
         quitter_j.destroy()
         sleep(1)
-        fond = PhotoImage(file='fonds/fond perdu.PNG', master=fenetre)
+        fond = PhotoImage(
+            file='./original/fonds/fond perdu.PNG', master=fenetre)
         can.create_image(569, 380, image=fond)
         can.update()
         scores['croupier'] += 1
@@ -271,7 +272,8 @@ def stay():
     blackjack()
     if valeur_m(main['croupier']) > 21:
         sleep(1)
-        fond = PhotoImage(file='fonds/fond gagné.PNG', master=fenetre)
+        fond = PhotoImage(
+            file='./original/fonds/fond gagné.PNG', master=fenetre)
         can.create_image(569, 380, image=fond)
         can.update()
         scores['joueur'] += 1
@@ -283,13 +285,15 @@ def stay():
     else:
         if valeur_m(main['humain']) > valeur_m(main['croupier']):
             sleep(1)
-            fond = PhotoImage(file='fonds/fond gagné.PNG', master=fenetre)
+            fond = PhotoImage(
+                file='./original/fonds/fond gagné.PNG', master=fenetre)
             can.create_image(569, 380, image=fond)
             can.update()
             scores['joueur'] += 1
         elif valeur_m(main['croupier']) > valeur_m(main['humain']):
             sleep(1)
-            fond = PhotoImage(file='fonds/fond perdu.PNG', master=fenetre)
+            fond = PhotoImage(
+                file='./original/fonds/fond perdu.PNG', master=fenetre)
             can.create_image(569, 380, image=fond)
             can.update()
             scores['croupier'] += 1
@@ -323,7 +327,8 @@ def doubler():
     blackjack()
     if valeur_m(main['croupier']) > 21:
         sleep(1)
-        fond = PhotoImage(file='fonds/fond gagné.PNG', master=fenetre)
+        fond = PhotoImage(
+            file='./original/fonds/fond gagné.PNG', master=fenetre)
         can.create_image(569, 380, image=fond)
         can.update()
         scores['joueur'] += 2
@@ -335,13 +340,15 @@ def doubler():
     else:
         if valeur_m(main['humain']) > valeur_m(main['croupier']):
             sleep(1)
-            fond = PhotoImage(file='fonds/fond gagné.PNG', master=fenetre)
+            fond = PhotoImage(
+                file='./original/fonds/fond gagné.PNG', master=fenetre)
             can.create_image(569, 380, image=fond)
             can.update()
             scores['joueur'] += 2
         elif valeur_m(main['croupier']) > valeur_m(main['humain']):
             sleep(1)
-            fond = PhotoImage(file='fonds/fond perdu.PNG', master=fenetre)
+            fond = PhotoImage(
+                file='./original/fonds/fond perdu.PNG', master=fenetre)
             can.create_image(569, 380, image=fond)
             can.update()
             scores['croupier'] += 2
@@ -362,7 +369,8 @@ def quitter():
     quitter_j.destroy()
     if len(valeurs) >= 6:
         if scores['joueur'] >= valeurs[-2]:
-            fond = PhotoImage(file='fonds/fond score.PNG', master=fenetre)
+            fond = PhotoImage(
+                file='./original/fonds/fond score.PNG', master=fenetre)
             can.create_image(569, 380, image=fond)
             can.update()
             value = StringVar()
@@ -372,13 +380,15 @@ def quitter():
             valider = Button(fenetre, text="Valider", command=recupere)
             valider.pack(side=RIGHT)
         else:
-            fond = PhotoImage(file='fonds/fond au revoir.PNG', master=fenetre)
+            fond = PhotoImage(
+                file='./original/fonds/fond au revoir.PNG', master=fenetre)
             can.create_image(569, 380, image=fond)
             can.update()
             sleep(2)
             fenetre.destroy()
     else:
-        fond = PhotoImage(file='fonds/fond score.PNG', master=fenetre)
+        fond = PhotoImage(
+            file='./original/fonds/fond score.PNG', master=fenetre)
         can.create_image(569, 380, image=fond)
         can.update()
         value = StringVar()
