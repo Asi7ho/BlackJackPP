@@ -25,3 +25,9 @@ class Game:
 
     def getScores(self):
         return sortScores(self.scores)
+
+    def updateScoreDealer(self):
+        self.scores['dealer'] += 1
+
+    def updateScorePlayer(self):
+        self.scores['player'] += 1

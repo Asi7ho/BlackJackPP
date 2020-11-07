@@ -29,6 +29,9 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         self.game = Game()
 
+        self.username = "unknown"
+        self.lineEdit = QLineEdit()
+
         # window
         self.setWindowTitle("Black Jack ++")
         self.setFixedSize(1136, 850)
@@ -101,29 +104,39 @@ class MainWindow(QMainWindow):
         widget.setLayout(vbox)
         self.setCentralWidget(widget)
 
+        self.game.initializeGameScore()
+
     def scoresPage(self):
         # add buttons for scores page
         backButton = QPushButton("Back")
         backButton.setStyleSheet(buttonStyle)
         backButton.clicked.connect(self.homePage)
 
-        # add scores data
-        _, keys, values = self.game.getScores()
-        numScoresToPlot = min(5, len(keys))
-        for rank in range(numScoresToPlot):
-            labelName = QLabel(keys[rank])
-            labelName.setFont(QFont('Arial', 26))
-            labelScore = QLabel(values[rank])
-            labelScore.setFont(QFont('Arial', 26))
-
         # layout
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
 
         hbox.addStretch(1)
-        vbox.addStretch(1)
-        vbox.addLayout(hbox)
 
+        # add widgets
+        wrapperScoreV = QVBoxLayout()
+        wrapperScoreV.setContentsMargins(20, 120, 0, 0)
+        _, keys, values = self.game.getScores()
+        numScoresToPlot = min(15, len(keys))
+        for rank in range(numScoresToPlot):
+            wrapperScoreH = QHBoxLayout()
+            labelName = QLabel(keys[rank])
+            labelName.setFont(QFont('Arial', 26))
+            labelScore = QLabel(values[rank])
+            labelScore.setFont(QFont('Arial', 26))
+            wrapperScoreH.addWidget(labelName)
+            wrapperScoreH.addWidget(labelScore)
+            wrapperScoreH.addStretch(1)
+            wrapperScoreV.addLayout(wrapperScoreH)
+
+        vbox.addLayout(wrapperScoreV)
+        vbox.addStretch()
+        vbox.addLayout(hbox)
         hbox.addWidget(backButton)
 
         widget = QWidget()
@@ -138,45 +151,170 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
     def gamePage(self):
-        # set the background image as the game page
-        self.background.setStyleSheet(
-            "background-image: url(./my version/assets/backgrounds/fond table.PNG)")
+        # add buttons for game page
+        hitButton = QPushButton("Hit")
+        hitButton.setStyleSheet(buttonStyle)
+        # hitButton.clicked.connect(self.game.hit)
 
-        clearLayout(self.hbox)
-        clearLayout(self.vbox)
+        standButton = QPushButton("Stand")
+        standButton.setStyleSheet(buttonStyle)
+        standButton.clicked.connect(self.game.stand)
 
-        self.leaveButton.clicked.connect(self.leavePage)
+        splitButton = QPushButton("Split")
+        splitButton.setStyleSheet(buttonStyle)
+        # splitButton.clicked.connect(self.game.split)
+
+        leaveButton = QPushButton("Leave")
+        leaveButton.setStyleSheet(buttonStyle)
+        leaveButton.clicked.connect(self.leavePage)
+
+        # add players name
         labelDealer = QLabel("Dealer")
         labelDealer.setFont(QFont('Arial', 26))
+        labelDealer.setStyleSheet(
+            "padding:5px 20px; color: white; background-color:rgb(43, 43, 43); border-radius:20px")
         labelPlayer = QLabel("You")
         labelPlayer.setFont(QFont('Arial', 26))
+        labelPlayer.setStyleSheet(
+            "padding:5px 20px; color: white; background-color:rgb(43, 43, 43); border-radius:20px")
 
-        self.hbox.addWidget(labelDealer, alignment=QtCore.Qt.AlignLeft)
-        self.hbox.addWidget(labelPlayer, alignment=QtCore.Qt.AlignRight)
+        # layout
+        hbox = QHBoxLayout()
+        vbox = QVBoxLayout()
 
-        self.hbox.addWidget(self.hitButton)
-        self.hbox.addWidget(self.standButton)
-        self.hbox.addWidget(self.splitButton)
-        self.hbox.addWidget(self.leaveButton)
+        hbox.addStretch(1)
+
+        # add widgets
+        wrapperGameV = QVBoxLayout()
+        wrapperGameV.addWidget(labelDealer, alignment=Qt.AlignCenter)
+        wrapperGameV.addStretch()
+        wrapperGameV.addWidget(labelPlayer, alignment=Qt.AlignCenter)
+
+        vbox.addLayout(wrapperGameV)
+        # vbox.addStretch()
+        vbox.addLayout(hbox)
+
+        hbox.addWidget(hitButton)
+        hbox.addWidget(standButton)
+        hbox.addWidget(splitButton)
+        hbox.addWidget(leaveButton)
+
+        widget = QWidget()
+
+        # set the background image as the game page
+        background = QLabel(widget)
+        background.setFixedSize(1136, 850)
+        background.setStyleSheet(
+            "background-image: url(./my version/assets/backgrounds/fond table.PNG)")
+
+        widget.setLayout(vbox)
+        self.setCentralWidget(widget)
+
+    def winPage(self):
+        # add buttons for win page
+        continueButton = QPushButton("Continue")
+        continueButton.setStyleSheet(buttonStyle)
+        continueButton.clicked.connect(self.gamePage)
+
+        leaveButton = QPushButton("Leave")
+        leaveButton.setStyleSheet(buttonStyle)
+        leaveButton.clicked.connect(self.leavePage)
+
+        # layout
+        hbox = QHBoxLayout()
+        vbox = QVBoxLayout()
+
+        hbox.addStretch(1)
+        vbox.addStretch(1)
+        vbox.addLayout(hbox)
+
+        hbox.addWidget(continueButton)
+        hbox.addWidget(leaveButton)
+
+        widget = QWidget()
+
+        # set the background image for leaving the game
+        background = QLabel(widget)
+        background.setFixedSize(1136, 850)
+        background.setStyleSheet(
+            "background-image: url(./my version/assets/backgrounds/fond gagne.PNG)")
+
+        widget.setLayout(vbox)
+        self.setCentralWidget(widget)
+
+        self.game.updateScorePlayer()
+
+    def lostPage(self):
+        # add buttons for win page
+        continueButton = QPushButton("Continue")
+        continueButton.setStyleSheet(buttonStyle)
+        continueButton.clicked.connect(self.gamePage)
+
+        leaveButton = QPushButton("Leave")
+        leaveButton.setStyleSheet(buttonStyle)
+        leaveButton.clicked.connect(self.leavePage)
+
+        # layout
+        hbox = QHBoxLayout()
+        vbox = QVBoxLayout()
+
+        hbox.addStretch(1)
+        vbox.addStretch(1)
+        vbox.addLayout(hbox)
+
+        hbox.addWidget(continueButton)
+        hbox.addWidget(leaveButton)
+
+        widget = QWidget()
+
+        # set the background image for leaving the game
+        background = QLabel(widget)
+        background.setFixedSize(1136, 850)
+        background.setStyleSheet(
+            "background-image: url(./my version/assets/backgrounds/fond perdu.PNG)")
+
+        widget.setLayout(vbox)
+        self.setCentralWidget(widget)
+
+        self.game.updateScoreDealer()
 
     def leavePage(self):
+        # add buttons for game page
+        confirmButton = QPushButton("Confirm")
+        confirmButton.setStyleSheet(buttonStyle)
+
+        # add widgets
+        label = QLabel("Enter your name:")
+        label.setFont(QFont('Arial', 26))
+
+        self.lineEdit.setStyleSheet(
+            "padding:5px 10px")
+
+        # layout
+        wrapperLE = QVBoxLayout()
+        wrapperLE.setContentsMargins(500, 50, 250, 650)
+        wrapperLE.addStretch()
+        wrapperLE.addWidget(label, alignment=Qt.AlignTop)
+        wrapperLE.addWidget(self.lineEdit, alignment=Qt.AlignTop)
+        wrapperLE.addWidget(confirmButton, alignment=Qt.AlignTop)
+
+        widget = QWidget()
+
         # set the background image for leaving the game
-        self.background.setStyleSheet(
+        background = QLabel(widget)
+        background.setFixedSize(1136, 850)
+        background.setStyleSheet(
             "background-image: url(./my version/assets/backgrounds/fond au revoir.PNG)")
 
-        clearLayout(self.hbox)
-        clearLayout(self.vbox)
+        widget.setLayout(wrapperLE)
+        self.setCentralWidget(widget)
 
+        confirmButton.clicked.connect(self.registerUser)
 
-def clearLayout(layout):
-    if layout is not None:
-        while layout.count():
-            item = layout.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.setParent(None)
-            else:
-                clearLayout(item.layout())
+    def registerUser(self):
+        if self.lineEdit.text() != "":
+            self.username = self.lineEdit.text()
+        sys.exit()
 
 
 if __name__ == "__main__":
