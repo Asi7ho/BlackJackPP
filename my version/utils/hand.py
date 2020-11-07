@@ -24,3 +24,9 @@ class Hand:
 
         self.score = handValue
         return(handValue)
+
+    def addCard(self, card):
+        self.hand.append(card)
+
+    def getLastCard(self):
+        return self.hand[-1]

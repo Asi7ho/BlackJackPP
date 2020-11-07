@@ -154,15 +154,15 @@ class MainWindow(QMainWindow):
         # add buttons for game page
         hitButton = QPushButton("Hit")
         hitButton.setStyleSheet(buttonStyle)
-        # hitButton.clicked.connect(self.game.hit)
+        hitButton.clicked.connect(self.hitEvent)
 
         standButton = QPushButton("Stand")
         standButton.setStyleSheet(buttonStyle)
-        standButton.clicked.connect(self.game.stand)
+        standButton.clicked.connect(self.standEvent)
 
         splitButton = QPushButton("Split")
         splitButton.setStyleSheet(buttonStyle)
-        # splitButton.clicked.connect(self.game.split)
+        splitButton.clicked.connect(self.splitEvent)
 
         leaveButton = QPushButton("Leave")
         leaveButton.setStyleSheet(buttonStyle)
@@ -178,6 +178,28 @@ class MainWindow(QMainWindow):
         labelPlayer.setStyleSheet(
             "padding:5px 20px; color: white; background-color:rgb(43, 43, 43); border-radius:20px")
 
+        # game
+        self.game.dealerTurn()
+        card = self.game.dealerHand.getLastCard()
+        cardDrawing = QLabel()
+        cardDrawing.setFixedSize(167, 225)
+        cardDrawing.setStyleSheet(
+            "border-image: url({})".format(card.getCardFile()))
+
+        self.game.playerTurn()
+        card = self.game.playerHand.getLastCard()
+        cardDrawing2 = QLabel()
+        cardDrawing2.setFixedSize(167, 225)
+        cardDrawing2.setStyleSheet(
+            "border-image: url({})".format(card.getCardFile()))
+
+        self.game.playerTurn()
+        card = self.game.playerHand.getLastCard()
+        cardDrawing3 = QLabel()
+        cardDrawing3.setFixedSize(167, 225)
+        cardDrawing3.setStyleSheet(
+            "border-image: url({})".format(card.getCardFile()))
+
         # layout
         hbox = QHBoxLayout()
         vbox = QVBoxLayout()
@@ -186,12 +208,28 @@ class MainWindow(QMainWindow):
 
         # add widgets
         wrapperGameV = QVBoxLayout()
+        wrapperGameDealer = QHBoxLayout()
+        wrapperGamePlayer = QHBoxLayout()
+
+        # label Dealer
         wrapperGameV.addWidget(labelDealer, alignment=Qt.AlignCenter)
+        # cards Dealer
+        wrapperGameDealer.addStretch()
+        wrapperGameDealer.addWidget(cardDrawing)
+        wrapperGameDealer.addStretch()
+        wrapperGameV.addLayout(wrapperGameDealer)
         wrapperGameV.addStretch()
+
+        # cards player
+        wrapperGamePlayer.addStretch()
+        wrapperGamePlayer.addWidget(cardDrawing2)
+        wrapperGamePlayer.addWidget(cardDrawing3)
+        wrapperGamePlayer.addStretch()
+        wrapperGameV.addLayout(wrapperGamePlayer)
+        # label player
         wrapperGameV.addWidget(labelPlayer, alignment=Qt.AlignCenter)
 
         vbox.addLayout(wrapperGameV)
-        # vbox.addStretch()
         vbox.addLayout(hbox)
 
         hbox.addWidget(hitButton)
@@ -209,6 +247,18 @@ class MainWindow(QMainWindow):
 
         widget.setLayout(vbox)
         self.setCentralWidget(widget)
+
+    def updateGamePage(self):
+        pass
+
+    def hitEvent(self):
+        pass
+
+    def standEvent(self):
+        pass
+
+    def splitEvent(self):
+        pass
 
     def winPage(self):
         # add buttons for win page
@@ -243,6 +293,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         self.game.updateScorePlayer()
+        self.game.resetHands()
 
     def lostPage(self):
         # add buttons for win page
@@ -277,6 +328,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         self.game.updateScoreDealer()
+        self.game.resetHands()
 
     def leavePage(self):
         # add buttons for game page

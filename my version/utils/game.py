@@ -1,7 +1,8 @@
+from random import shuffle
 from .scores import *
 from .constants import cardRank, cardFigure
 from .card import Card
-from random import shuffle
+from.hand import Hand
 
 
 class Game:
@@ -17,7 +18,18 @@ class Game:
 
         shuffle(self.deck)
 
+        self.dealerHand = Hand()
+        self.playerHand = Hand()
         self.scores = getScoresFromFile()
+
+    def resetDeck(self):
+        for figure in cardFigure:
+            for rank in range(1, len(cardRank) + 1):
+                self.deck.append(Card(rank, figure))
+
+    def resetHands(self):
+        self.dealerHand = Hand()
+        self.playerHand = Hand()
 
     def initializeGameScore(self):
         self.scores['player'] = 0
@@ -31,3 +43,11 @@ class Game:
 
     def updateScorePlayer(self):
         self.scores['player'] += 1
+
+    def dealerTurn(self):
+        card = self.deck.pop(0)
+        self.dealerHand.addCard(card)
+
+    def playerTurn(self):
+        card = self.deck.pop(0)
+        self.playerHand.addCard(card)

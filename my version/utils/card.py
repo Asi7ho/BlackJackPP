@@ -3,7 +3,6 @@
 """
 
 from .constants import cardRank, cardFigure
-from tkinter import PhotoImage
 
 
 class Card:
@@ -15,9 +14,8 @@ class Card:
         return(cardRank[self.rank] + " de " + cardFigure[self.figure])
 
     def getCardFile(self):
-        name = "../cards/" + cardRank[self.rank] + \
+        return "./my version/assets/cards/" + cardRank[self.rank] + \
             " de " + cardFigure[self.figure] + ".PNG"
-        return PhotoImage(file=name)
 
     def getRank(self):
         return(self.rank)
