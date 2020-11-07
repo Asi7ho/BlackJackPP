@@ -4,6 +4,7 @@
 
 import os
 import pickle
+from collections import OrderedDict
 
 from .constants import localScoresFile
 
@@ -34,3 +35,18 @@ def saveScores(scores):
     scoresFile = pickle.Pickler(scoresFile)
     scoresFile.dump(scores)
     scoresFile.close()
+
+
+def sortScores(scores):
+    sortedDict = OrderedDict(
+        sorted(scores.items(), key=lambda t: t[1], reverse=True))
+
+    keys = []
+    values = []
+    for v in sortedDict.values():
+        values.append(v)
+
+    for k in sortedDict.keys():
+        keys.append(k)
+
+    return sortedDict, keys, values

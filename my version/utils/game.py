@@ -17,4 +17,11 @@ class Game:
 
         shuffle(self.deck)
 
-        self.numPlayer = 2
+        self.scores = getScoresFromFile()
+
+    def initializeGameScore(self):
+        self.scores['player'] = 0
+        self.scores['dealer'] = 0
+
+    def getScores(self):
+        return sortScores(self.scores)
