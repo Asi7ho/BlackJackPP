@@ -17,8 +17,8 @@ def getScoresFromFile():
 
     if os.path.exists(localScoresFile):
         scoresFile = open(localScoresFile, "rb")
-        scoresFile = pickle.Unpickler(scoresFile)
-        scores = scoresFile.load()
+        scoresUnpickle = pickle.Unpickler(scoresFile)
+        scores = scoresUnpickle.load()
         scoresFile.close()
     else:
         scores = {}
@@ -32,8 +32,8 @@ def saveScores(scores):
 
     # The previous data are erased
     scoresFile = open(localScoresFile, "wb")
-    scoresFile = pickle.Pickler(scoresFile)
-    scoresFile.dump(scores)
+    scoresPickle = pickle.Pickler(scoresFile)
+    scoresPickle.dump(scores)
     scoresFile.close()
 
 

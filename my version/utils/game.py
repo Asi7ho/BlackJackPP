@@ -51,3 +51,6 @@ class Game:
     def playerTurn(self):
         card = self.deck.pop(0)
         self.playerHand.addCard(card)
+
+    def saveGameScore(self):
+        saveScores(self.scores)

@@ -4,6 +4,12 @@ from utils.game import Game
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+import time
+
+WINDOW_WIDTH = 1136
+WINDOW_HEIGHT = 850
+CARD_WIDTH = 167
+CARD_HEIGHT = 225
 
 buttonStyle = """
                 QPushButton {
@@ -34,11 +40,12 @@ class MainWindow(QMainWindow):
 
         # window
         self.setWindowTitle("Black Jack ++")
-        self.setFixedSize(1136, 850)
+        self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         # launch
         self.homePage()
         self.show()
+        self.status = 0
 
     def homePage(self):
         # add buttons for home page
@@ -65,7 +72,7 @@ class MainWindow(QMainWindow):
 
         # set the background image as the home page
         background = QLabel(widget)
-        background.setFixedSize(1136, 850)
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         background.setStyleSheet(
             "background-image: url(./my version/assets/backgrounds/fond_acceuil.png)")
 
@@ -76,7 +83,7 @@ class MainWindow(QMainWindow):
         # add buttons for rules page
         playButton = QPushButton("Play")
         playButton.setStyleSheet(buttonStyle)
-        playButton.clicked.connect(self.gamePage)
+        playButton.clicked.connect(self.processGame)
 
         backButton = QPushButton("Back")
         backButton.setStyleSheet(buttonStyle)
@@ -97,7 +104,7 @@ class MainWindow(QMainWindow):
 
         # set the background image as the rules page
         background = QLabel(widget)
-        background.setFixedSize(1136, 850)
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         background.setStyleSheet(
             "background-image: url(./my version/assets/backgrounds/fond regle.PNG)")
 
@@ -125,9 +132,9 @@ class MainWindow(QMainWindow):
         numScoresToPlot = min(15, len(keys))
         for rank in range(numScoresToPlot):
             wrapperScoreH = QHBoxLayout()
-            labelName = QLabel(keys[rank])
+            labelName = QLabel("{}".format(keys[rank]))
             labelName.setFont(QFont('Arial', 26))
-            labelScore = QLabel(values[rank])
+            labelScore = QLabel("{}".format(values[rank]))
             labelScore.setFont(QFont('Arial', 26))
             wrapperScoreH.addWidget(labelName)
             wrapperScoreH.addWidget(labelScore)
@@ -143,7 +150,7 @@ class MainWindow(QMainWindow):
 
         # set the background image as the scores page
         background = QLabel(widget)
-        background.setFixedSize(1136, 850)
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         background.setStyleSheet(
             "background-image: url(./my version/assets/backgrounds/fond score.PNG)")
 
@@ -169,36 +176,16 @@ class MainWindow(QMainWindow):
         leaveButton.clicked.connect(self.leavePage)
 
         # add players name
-        labelDealer = QLabel("Dealer")
+        labelDealer = QLabel("Dealer: {}".format(
+            self.game.dealerHand.handValue()))
         labelDealer.setFont(QFont('Arial', 26))
         labelDealer.setStyleSheet(
             "padding:5px 20px; color: white; background-color:rgb(43, 43, 43); border-radius:20px")
-        labelPlayer = QLabel("You")
+        labelPlayer = QLabel("You: {}".format(
+            self.game.playerHand.handValue()))
         labelPlayer.setFont(QFont('Arial', 26))
         labelPlayer.setStyleSheet(
             "padding:5px 20px; color: white; background-color:rgb(43, 43, 43); border-radius:20px")
-
-        # game
-        self.game.dealerTurn()
-        card = self.game.dealerHand.getLastCard()
-        cardDrawing = QLabel()
-        cardDrawing.setFixedSize(167, 225)
-        cardDrawing.setStyleSheet(
-            "border-image: url({})".format(card.getCardFile()))
-
-        self.game.playerTurn()
-        card = self.game.playerHand.getLastCard()
-        cardDrawing2 = QLabel()
-        cardDrawing2.setFixedSize(167, 225)
-        cardDrawing2.setStyleSheet(
-            "border-image: url({})".format(card.getCardFile()))
-
-        self.game.playerTurn()
-        card = self.game.playerHand.getLastCard()
-        cardDrawing3 = QLabel()
-        cardDrawing3.setFixedSize(167, 225)
-        cardDrawing3.setStyleSheet(
-            "border-image: url({})".format(card.getCardFile()))
 
         # layout
         hbox = QHBoxLayout()
@@ -208,25 +195,12 @@ class MainWindow(QMainWindow):
 
         # add widgets
         wrapperGameV = QVBoxLayout()
-        wrapperGameDealer = QHBoxLayout()
-        wrapperGamePlayer = QHBoxLayout()
 
         # label Dealer
         wrapperGameV.addWidget(labelDealer, alignment=Qt.AlignCenter)
-        # cards Dealer
-        wrapperGameDealer.addStretch()
-        wrapperGameDealer.addWidget(cardDrawing)
-        wrapperGameDealer.addStretch()
-        wrapperGameV.addLayout(wrapperGameDealer)
-        wrapperGameV.addStretch()
 
-        # cards player
-        wrapperGamePlayer.addStretch()
-        wrapperGamePlayer.addWidget(cardDrawing2)
-        wrapperGamePlayer.addWidget(cardDrawing3)
-        wrapperGamePlayer.addStretch()
-        wrapperGameV.addLayout(wrapperGamePlayer)
         # label player
+        wrapperGameV.addStretch()
         wrapperGameV.addWidget(labelPlayer, alignment=Qt.AlignCenter)
 
         vbox.addLayout(wrapperGameV)
@@ -234,28 +208,116 @@ class MainWindow(QMainWindow):
 
         hbox.addWidget(hitButton)
         hbox.addWidget(standButton)
-        hbox.addWidget(splitButton)
+        # hbox.addWidget(splitButton)
         hbox.addWidget(leaveButton)
 
-        widget = QWidget()
+        vbox.addLayout(wrapperGameV)
 
-        # set the background image as the game page
-        background = QLabel(widget)
-        background.setFixedSize(1136, 850)
-        background.setStyleSheet(
-            "background-image: url(./my version/assets/backgrounds/fond table.PNG)")
+        widget = self.updateGamePage()
 
         widget.setLayout(vbox)
         self.setCentralWidget(widget)
 
+        if self.game.dealerHand.handValue() == 21 and len(self.game.dealerHand.hand) == 2:
+            loop = QEventLoop()
+            QTimer.singleShot(1000, loop.quit)
+            loop.exec_()
+            self.lostPage()
+            return
+
+        if self.game.playerHand.handValue() == 21 and len(self.game.playerHand.hand) == 2:
+            loop = QEventLoop()
+            QTimer.singleShot(1000, loop.quit)
+            loop.exec_()
+            self.winPage()
+            return
+
+        if self.game.playerHand.handValue() > 21:
+            loop = QEventLoop()
+            QTimer.singleShot(1000, loop.quit)
+            loop.exec_()
+            self.lostPage()
+            return
+
+        if self.game.dealerHand.handValue() > 21:
+            loop = QEventLoop()
+            QTimer.singleShot(1000, loop.quit)
+            loop.exec_()
+            self.winPage()
+            return
+
+        if self.status == 1:
+            if self.game.dealerHand.handValue() >= self.game.playerHand.handValue():
+                loop = QEventLoop()
+                QTimer.singleShot(1000, loop.quit)
+                loop.exec_()
+                self.lostPage()
+
+    def processGame(self):
+        self.gamePage()
+
+        # game
+        loop = QEventLoop()
+        QTimer.singleShot(500, loop.quit)
+        loop.exec_()
+        self.game.dealerTurn()
+        self.gamePage()
+
+        loop = QEventLoop()
+        QTimer.singleShot(500, loop.quit)
+        loop.exec_()
+        self.game.playerTurn()
+        self.gamePage()
+
+        loop = QEventLoop()
+        QTimer.singleShot(500, loop.quit)
+        loop.exec_()
+        self.game.playerTurn()
+        self.gamePage()
+
     def updateGamePage(self):
-        pass
+        widget = QWidget()
+        background = QLabel(widget)
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        background.setStyleSheet(
+            "background-image: url(./my version/assets/backgrounds/fond table.PNG)")
+
+        numDealerCards = len(self.game.dealerHand.hand)
+        for c in range(numDealerCards):
+            cardDrawing = QLabel(widget)
+            x = int(WINDOW_WIDTH/2 - (CARD_WIDTH + 25 *
+                                      (numDealerCards - 1 - c)) / 2 + 25 * c)
+            y = 70
+            cardDrawing.setGeometry(x, y, CARD_WIDTH, CARD_HEIGHT)
+            cardDrawing.setStyleSheet(
+                "border-image: url({})".format(self.game.dealerHand.hand[c].getCardFile()))
+
+        numPlayerCards = len(self.game.playerHand.hand)
+        for c in range(numPlayerCards):
+            cardDrawing = QLabel(widget)
+            x = int(WINDOW_WIDTH/2 - (CARD_WIDTH + 25 *
+                                      (numPlayerCards - 1 - c)) / 2 + 25 * c)
+            y = 500
+            cardDrawing.setGeometry(x, y, CARD_WIDTH, CARD_HEIGHT)
+            cardDrawing.setStyleSheet(
+                "border-image: url({})".format(self.game.playerHand.hand[c].getCardFile()))
+
+        return widget
 
     def hitEvent(self):
-        pass
+        self.game.playerTurn()
+        self.gamePage()
 
     def standEvent(self):
-        pass
+        while self.game.dealerHand.handValue() <= self.game.playerHand.handValue():
+            loop = QEventLoop()
+            QTimer.singleShot(500, loop.quit)
+            loop.exec_()
+            self.game.dealerTurn()
+            self.gamePage()
+
+        self.status = 1
+        self.gamePage()
 
     def splitEvent(self):
         pass
@@ -264,7 +326,7 @@ class MainWindow(QMainWindow):
         # add buttons for win page
         continueButton = QPushButton("Continue")
         continueButton.setStyleSheet(buttonStyle)
-        continueButton.clicked.connect(self.gamePage)
+        continueButton.clicked.connect(self.newGame)
 
         leaveButton = QPushButton("Leave")
         leaveButton.setStyleSheet(buttonStyle)
@@ -285,7 +347,7 @@ class MainWindow(QMainWindow):
 
         # set the background image for leaving the game
         background = QLabel(widget)
-        background.setFixedSize(1136, 850)
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         background.setStyleSheet(
             "background-image: url(./my version/assets/backgrounds/fond gagne.PNG)")
 
@@ -293,13 +355,12 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
 
         self.game.updateScorePlayer()
-        self.game.resetHands()
 
     def lostPage(self):
         # add buttons for win page
         continueButton = QPushButton("Continue")
         continueButton.setStyleSheet(buttonStyle)
-        continueButton.clicked.connect(self.gamePage)
+        continueButton.clicked.connect(self.newGame)
 
         leaveButton = QPushButton("Leave")
         leaveButton.setStyleSheet(buttonStyle)
@@ -320,15 +381,23 @@ class MainWindow(QMainWindow):
 
         # set the background image for leaving the game
         background = QLabel(widget)
-        background.setFixedSize(1136, 850)
-        background.setStyleSheet(
-            "background-image: url(./my version/assets/backgrounds/fond perdu.PNG)")
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        if self.game.dealerHand.handValue() == 21 and len(self.game.dealerHand.hand) == 2:
+            background.setStyleSheet(
+                "background-image: url(./my version/assets/backgrounds/fond perdu blackjack.PNG)")
+        else:
+            background.setStyleSheet(
+                "background-image: url(./my version/assets/backgrounds/fond perdu.PNG)")
 
         widget.setLayout(vbox)
         self.setCentralWidget(widget)
 
         self.game.updateScoreDealer()
+
+    def newGame(self):
         self.game.resetHands()
+        self.status = 0
+        self.processGame()
 
     def leavePage(self):
         # add buttons for game page
@@ -354,7 +423,7 @@ class MainWindow(QMainWindow):
 
         # set the background image for leaving the game
         background = QLabel(widget)
-        background.setFixedSize(1136, 850)
+        background.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
         background.setStyleSheet(
             "background-image: url(./my version/assets/backgrounds/fond au revoir.PNG)")
 
@@ -366,6 +435,9 @@ class MainWindow(QMainWindow):
     def registerUser(self):
         if self.lineEdit.text() != "":
             self.username = self.lineEdit.text()
+
+        self.game.scores[self.username] = self.game.scores['player']
+        self.game.saveGameScore()
         sys.exit()
 
 

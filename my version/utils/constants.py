@@ -13,7 +13,7 @@ cardRank = {1: 'As',
             9: '9',
             10: '10',
             11: 'valet',
-            12: 'reine',
+            12: 'dame',
             13: 'roi'}
 
 cardFigure = {'p': 'pique',

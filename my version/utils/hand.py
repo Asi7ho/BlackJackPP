@@ -6,7 +6,6 @@
 class Hand:
     def __init__(self):
         self.hand = []
-        self.score = 0
 
     def addCard(self, card):
         self.hand.append(card)
@@ -22,7 +21,6 @@ class Hand:
             if card.getRank() == 1 and handValue + 10 <= 21:
                 handValue += 10
 
-        self.score = handValue
         return(handValue)
 
     def addCard(self, card):
