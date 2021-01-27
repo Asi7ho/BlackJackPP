@@ -4,7 +4,5 @@
       "path": "."
     }
   ],
-  "settings": {
-    "python.pythonPath": "/Users/yanndebain/opt/miniconda3/envs/BlackJackPP/bin/python"
-  }
+  "settings": {}
 }

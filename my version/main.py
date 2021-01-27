@@ -211,8 +211,6 @@ class MainWindow(QMainWindow):
         # hbox.addWidget(splitButton)
         hbox.addWidget(leaveButton)
 
-        vbox.addLayout(wrapperGameV)
-
         widget = self.updateGamePage()
 
         widget.setLayout(vbox)
